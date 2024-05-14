@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="content-type" content="text/html" charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Harmonify | Backup/Restore Service for Spotify</title>
+        <title>Harmonytify | Backup/Restore Service for Spotify</title>
         <!-- Bootstrap CSS -->
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-r4NyP46fRn8r4nebjK9r8YigyyS+fZtXml5d4P6YZ5lCnfdaTl8S12Ah0e1DP3j5" crossorigin="anonymous">
         <!-- Set Favicon -->
@@ -382,9 +382,9 @@
         <div class="container custom-shadow custom-rounded">
             <div class="heading text-center mb-4">
                 <img src="./logo.png" alt="Harmonify Logo" class="logo">
-                <h1 class="title-bold display-4 d-inline">Harmon</h1>
-                <h1 class="title-light display-4 d-inline">ify</h1>
-                <h1 class="title-bold display-4 d-inline">.XYZ</h1>
+                <h1 class="title-bold display-4 d-inline">Harmony</h1>
+                <h1 class="title-light display-4 d-inline">tify</h1>
+                <h1 class="title-bold display-4 d-inline">Tool</h1>
                 <div id="pnlLoggedOut" class="text-center p-5">
                     <p class="lead mb-4">Export your playlists and tracks setup into a file by a single click. Import the file to restore your setup at any time.</p>
                     <button id="login" class="btn btn-lg custom-login-btn">Login with Spotify</button>
@@ -527,7 +527,7 @@ function login() {
 
     var set = {
       client_id: 'ff9f2d6723914602a457d2f6e92ad29b',
-      redirect_uri: 'https://harmonify.xyz/login.html',
+      redirect_uri: 'https://harmonytify.github.io/login.html',
       scope: 'playlist-read playlist-read-private playlist-modify-public playlist-modify-private user-library-read user-library-modify',
       response_type: 'token',
       show_dialog: 'true'
@@ -546,7 +546,7 @@ function relogin() {
 }
     
 function authCallback(event){
-    if (event.origin !== "https://harmonify.xyz") {
+    if (event.origin !== "https://harmonytify.github.io/") {
         console.log("config.uri missconfigured:");
         return;
     }
