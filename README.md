@@ -5,8 +5,8 @@
     </picture>
   </a>
 </p>
-<h1 align="center"/>Harmonify</h1>
+<h1 align="center"/>Harmonytify</h1>
 
 <p align="center">
-    Harmonify is a <a href="https://spotify.com">Spotify</a> tool for backing up Playlist and Liked Music.
+    Harmonytify is a <a href="https://spotify.com">Spotify</a> tool for backing up Playlist and Liked Music.
 </p>
