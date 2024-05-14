@@ -1,0 +1,7 @@
+config = {
+"uri":"https://harmonify.xyz",
+"redirect_uri":"https://harmonify.xyz/login.html",
+"client_id":"ff9f2d6723914602a457d2f6e92ad29b",
+"slowdown_import": 100,
+"slowdown_export": 100
+};

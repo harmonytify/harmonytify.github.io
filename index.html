@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html" charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Harmonify | Backup/Restore Service for Spotify</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-r4NyP46fRn8r4nebjK9r8YigyyS+fZtXml5d4P6YZ5lCnfdaTl8S12Ah0e1DP3j5" crossorigin="anonymous">
+        <!-- Set Favicon -->
+        <link rel="icon" href="./logo.png" type="image/png">
+        
+        <!-- Your custom styles (optional) -->
+        
+        <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+        <!-- Bootstrap Bundle with Popper -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.bundle.min.js" integrity="sha384-oesi62hXacuddZmI3zTBsHJfR7lKpBlcNNPVsErnELFuzzK5XL0EqS5Lg/licO2" crossorigin="anonymous"></script>
+        
+        <!-- Other scripts -->
+        <script type="text/javascript" src="config.json"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+        <style type='text/css'>
+                body {
+                    padding: 0;
+                    margin: 0;
+                    font-family: 'Lato', sans-serif;
+                    background: url(./background.svg) no-repeat center center; /* Center the image */
+                    background-attachment: fixed; /* Optional: fixes the background */
+                    background-size: contain; /* Fit the entire image into view */
+                    color: #333;
+                    height: 100vh; /* Make sure the body covers full viewport height */
+                    display: flex;
+                    align-items: center; /* Center content vertically */
+                    justify-content: center; /* Center content horizontally */
+                }
+
+                .container {
+                    width: 100%;
+                    max-width: 640px; /* Bootstrap's responsive width */
+                    margin: 2rem auto; /* More modern spacing */
+                    padding: 1rem;
+                    background: #fff; /* Optional: for contrast against the background */
+                    box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.1); /* Subtle shadow */
+                }
+
+                .footer {
+                    position: fixed;
+                    bottom: 0;
+                    width: 100%;
+                    text-align: center;
+                    background: #333; /* Dark background for modern look */
+                    color: #f8f9fa; /* Light text for readability */
+                }
+
+                .footer-container {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 1rem;
+                    max-width: 640px; /* Consistent with .container width */
+                    margin: 0 auto; /* Center container */
+                    border-bottom: 1px solid #eaeaea; /* Subtle border */
+                    background-color: rgba(255,255,255,0.1); /* Slightly transparent background */
+                }
+
+                .footer-link {
+                    color: #34c759; /* Green color for links */
+                    text-decoration: none; /* No underline */
+                    padding: 0.5rem 1rem; /* Padding for better touch */
+                    transition: color 0.3s; /* Smooth transition for hover */
+                }
+
+                .footer-link:hover {
+                    color: #f8f9fa; /* Light color on hover */
+                }
+
+
+                .heading {
+                    padding: 20px;
+                    background: linear-gradient(135deg, #0c0c0c, #020202); /* Green gradient background */
+                    color: white; /* White text for contrast */
+                    text-shadow: 2px 2px 10px rgba(0,0,0,0.2); /* Text shadow for depth */
+                    border-radius: 15px; /* Rounded corners */
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.2); /* Shadow for the heading */
+                    margin-bottom: 2rem; /* Spacing from the content below */
+                }
+                .heading .logo {
+                    width: 37px; /* Adjust as per your logo's aspect ratio */
+                    height: auto; /* Maintain aspect ratio */
+                    vertical-align: top; /* Aligns the logo with the text */
+                    margin-right: 10px; /* Space between logo and text */
+                }
+                @media (max-width: 768px) {
+                .heading .logo {
+                    width: 37px; /* Smaller logo for smaller screens */
+                }
+                }
+
+
+                .custom-rounded {
+                   border-radius: 30px; /* Increased border-radius for more rounded corners */
+                  }
+
+                .custom-shadow {
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* Subtle, effective shadow */
+                 }
+                .title-bold, .title-light {
+                    font-family: 'Lato', sans-serif; /* Modern, clean font */
+                    display: inline; /* Keeps the title inline */
+                }
+
+                .title-bold {
+                    color: #e6ffe6; /* Light green for the bold parts */
+                    text-shadow: 2px 2px 8px rgba(0,0,0,0.5); /* More pronounced shadow on bold text */
+                }
+
+                .title-light {
+                    color: #5af05a; /* Even lighter green for contrast */
+                    opacity: 0.9; /* Slightly less emphasis on the 'My' part */
+                }
+                .button-container {
+                    display: flex; /* Flex container */
+                    justify-content: center; /* Centers content horizontally */
+                    align-items: center; /* Centers content vertically, useful if the container has more height */
+                }
+
+                .custom-login-btn {
+                    color: #282727; /* White text */
+                    font-weight: bold; /* Bold font for text */
+                    font-size: 1.1rem; /* Slightly larger font size */
+                    padding: 10px 30px; /* Ample padding */
+                    border: none; /* No border */
+                    border-radius: 30px; /* Rounded edges */
+                    background-image: linear-gradient(to right, #1db954, #1ed760); /* Green gradient */
+                    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transitions for press */
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+                    display: block; /* Make the button a block element to fill the flex container */
+                    margin: 0 auto; /* Auto margins on the sides to center horizontally */
+                }
+
+                .custom-login-btn:hover, .custom-login-btn:focus {
+                    transform: scale(1.05); /* Slightly larger on hover/focus */
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Larger shadow on hover/focus */
+                }
+
+                .button-main:hover {
+                    background-color: #0056b3; /* Darken on hover */
+                }
+                .loading-account {
+                    display: none; /* Initially hidden, display it when needed */
+                    font-size: 16px;
+                    padding: 20px;
+                    background-color: #121212; /* Dark background for modern look */
+                    color: #f8f9fa; /* Light text for readability */
+                    border-radius: 10px; /* Rounded corners */
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+                    margin-bottom: 20px; /* Space below the container */
+                    text-align: center; /* Center text */
+                }
+
+                .account-title {
+                    color: #34c759; /* Green color for title */
+                    font-weight: bold; /* Bold font for emphasis */
+                    margin-bottom: 1rem; /* Spacing after title */
+                }
+
+                .loading-progress {
+                    background-color: #2d2d2d; /* Darker shade for loading background */
+                    border-radius: 15px; /* Rounded corners for loading bar */
+                    height: 20px; /* Fixed height for loading bars */
+                    width: 100%; /* Full width loading bars */
+                    margin-bottom: 10px; /* Space between loading items */
+                    color: #34c759; /* Green text color */
+                    text-align: center; /* Align text to the left */
+                    position: relative; /* Positioning context for pseudo-elements */
+                    overflow: hidden; /* Ensures that pseudo-elements are contained within the rounded corners */
+                    border: 2px solid #34c759
+                }
+
+                .loading-progress::before {
+                    content: '';
+                    position: absolute; /* Absolute position to fill the container */
+                    top: 0;
+                    left: 0;
+                    width: 50%; /* Represents the loading progress, adjust accordingly */
+                    height: 100%;
+                    background: linear-gradient(to right, #1db954 0%, #4cae4f 100%); /* Animated green gradient */
+                    animation: loading 2s ease-in-out infinite;
+                    border-radius: 13px; /* Slightly less than container to fit within the border */
+
+                }
+
+                @keyframes loading {
+                    0% { left: -50%; }
+                    50% { left: 10%; }
+                    100% { left: 100%; }
+                }
+                .loading-status {
+                    margin-top: 20px;
+                    color: #2dbf4e; /* Updated green color */
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 10px; /* Ensures space between spinner and text */
+                }
+
+                /* Spinner styles */
+                .spinner-border,
+                .spinner-grow {
+                    display: inline-block;
+                    width: 20px; /* Size of the spinner */
+                    height: 20px; /* Size of the spinner */
+                    border: 2px solid #2dbf4e; /* Border color */
+                    border-radius: 50%;
+                }
+
+                .spinner-border {
+                    border-top-color: transparent; /* Makes the top border transparent */
+                    animation: spinner-border .75s linear infinite;
+                }
+
+                .spinner-grow {
+                    background-color: transparent; /* Initial background color */
+                    animation: none; /* No animation initially */
+                }
+
+                /* Keyframes for the animations */
+                @keyframes spinner-border {
+                    to { transform: rotate(360deg); }
+                }
+
+                @keyframes spinner-grow {
+                    0% {
+                        transform: scale(0);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: scale(1);
+                        opacity: 0;
+                    }
+                }
+                .loading-progress.stop-animation::before {
+                animation: none; /* This stops the animation */
+                width: 100%; /* This stretches the ::before element to full width */
+                background: none;
+            }
+                .action-panel, .re-login {
+                    display: none; /* Initially hidden */
+                    overflow: hidden; /* Keep the child elements contained */
+                    padding: 20px;
+                    background-color: #1A1A1A; /* Dark background for modern look */
+                    border-radius: 10px; /* Rounded corners */
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+                    margin: 20px 0; /* Vertical spacing */
+                }
+                .action-button {
+                    width: 100%; /* Take the full width of the parent on mobile */
+                    margin-bottom: 10px; /* Space between buttons */
+                }
+
+                .btn.custom-action-btn {
+                    width: 100%; /* Full width within the parent */
+                    padding: 10px 20px; /* Padding for a larger hit area */
+                    font-weight: bold; /* Bold font for text */
+                    text-transform: uppercase; /* Uppercase text for a button */
+                    color: #fff; /* White text */
+                    background-color: #34c759; /* Green background */
+                    border: none; /* No border */
+                    border-radius: 25px; /* Rounded edges */
+                    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions for hover */
+                    cursor: pointer; /* Cursor indicates an action */
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+                }
+
+                .btn.custom-action-btn:hover {
+                    background-color: #28a745; /* Slightly darker on hover */
+                    transform: translateY(-2px); /* Lift effect on hover */
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
+                }
+
+                @media (min-width: 768px) { /* For larger screens, side by side buttons */
+                    .action-button {
+                        width: 50%; /* Half width for larger screens */
+                        float: left; /* Float side by side */
+                    }
+                }
+                .import-panel {
+                    display: none; /* Initially hidden */
+                    font-size: 16px;
+                    padding: 20px;
+                    background-color: #262626; /* Dark background for modern look */
+                    color: #f8f9fa; /* Light text for readability */
+                    border-radius: 15px; /* Rounded corners */
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+                    margin-bottom: 20px; /* Space below the container */
+                }
+
+                .file-section {
+                    display: flex; /* Align label and input side by side */
+                    align-items: center; /* Center items vertically */
+                    margin-bottom: 1rem; /* Space after the file section */
+                }
+
+                .file-label {
+                    margin-right: 10px; /* Space between label and input */
+                    font-weight: bold; /* Bold font for the label */
+                    color: #f8f9fa; /* Light text for readability */
+                }
+
+                .file-input {
+                    flex-grow: 1; /* Allow input to take up available space */
+                    padding: 8px 12px; /* Padding inside the input */
+                    border-radius: 5px; /* Rounded corners for the input field */
+                    border: 2px solid #34c759; /* Border to indicate clickable area */
+                    color: #333; /* Dark text color */
+                    background-color: #f8f9fa; /* Light background */
+                }
+
+                .file-info {
+                    display: none; /* Initially hidden, show when there's file info */
+                }
+
+                .title-medium {
+                    color: #34c759; /* Green color for titles */
+                    font-weight: bold; /* Bold font weight */
+                    margin-bottom: 10px; /* Spacing after title */
+                }
+
+                .file-details {
+                    background-color: #333; /* Slightly lighter background for details */
+                    color: #f8f9fa; /* Light text for readability */
+                    border-radius: 5px; /* Rounded corners */
+                    padding: 10px; /* Padding for details */
+                    margin-bottom: 10px; /* Space between detail items */
+                }
+                .upload-panel {
+                    display: none; /* Initially hidden */
+                    font-size: 16px;
+                    padding: 20px;
+                    background-color: #333; /* Dark background for modern look */
+                    color: #f8f9fa; /* Light text for readability */
+                    border-radius: 15px; /* Rounded corners */
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+                    margin-bottom: 20px; /* Space below the container */
+                    text-align: left; /* Align text to the left */
+                }
+
+                .title-medium {
+                    color: #34c759; /* Green color for titles */
+                    font-weight: bold; /* Bold font weight */
+                    margin-bottom: 1rem; /* Spacing after title */
+                }
+
+                .status-item {
+                    margin-bottom: 10px; /* Spacing between status items */
+                    color: #d1d1d1; /* Lighter text for status items */
+                }
+
+                .global-step {
+                    margin-bottom: 1rem; /* Space before progress bar */
+                }
+
+                .custom-progress {
+                    height: 20px; /* Height of the progress bar */
+                    background-color: #555; /* Darker background for progress container */
+                    border-radius: 25px; /* Fully rounded corners for container */
+                    overflow: hidden; /* Ensures children (like the progress bar) are contained */
+                    margin-bottom: 1rem; /* Space after progress bar */
+                }
+
+                .custom-progress .progress-bar {
+                    display: none; /* Initially hidden, show when progress is made */
+                    height: 100%;
+                    background-color: #28a745; /* Green color for progress */
+                    border-radius: 25px; /* Fully rounded corners for progress bar */
+                    transition: width 0.6s ease; /* Smooth transition for changes in progress */
+                }
+            </style>
+    </head>
+    <body>
+        <div class="container custom-shadow custom-rounded">
+            <div class="heading text-center mb-4">
+                <img src="./logo.png" alt="Harmonify Logo" class="logo">
+                <h1 class="title-bold display-4 d-inline">Harmon</h1>
+                <h1 class="title-light display-4 d-inline">ify</h1>
+                <h1 class="title-bold display-4 d-inline">.XYZ</h1>
+                <div id="pnlLoggedOut" class="text-center p-5">
+                    <p class="lead mb-4">Export your playlists and tracks setup into a file by a single click. Import the file to restore your setup at any time.</p>
+                    <button id="login" class="btn btn-lg custom-login-btn">Login with Spotify</button>
+                </div>
+            </div>
+            <div id="pnlLoadingAccount" class="loading-account">
+                <div class="account-title">Account: <span id="userName"></span></div>
+                <div class="loading-progress" id="loadingPlaylists">Loading playlists...</div>
+                <div class="loading-progress" id="loadingTracks">Loading tracks...</div>
+                <div class="loading-status" id="loadingTitle">
+                    <div id="spinner" class="spinner-border text-success" role="status">
+                        <span class="visually-hidden"></span>
+                    </div>
+                    <span class="status-message">Please wait. Loading your playlists and tracks...</span>
+                </div>
+            </div>
+            <div id="pnlAction" class="action-panel">
+                <div class="action-button">
+                    <button id="btnExport" class="btn custom-action-btn">Export</button>
+                </div>
+                <div class="action-button">
+                    <button id="btnImport" class="btn custom-action-btn">Import</button>
+                </div>
+            </div>
+             <div id="ReLogin" class="re-login">
+                <button id="btnRelogin" class="btn btn-lg custom-login-btn">Start Over</button>
+            </div>
+            <div id="pnlImport" class="import-panel">
+                <div class="file-section">
+                    <label for="fileImport" class="file-label">Select a previously exported file:</label>
+                    <input type="file" id="fileImport" class="file-input" />
+                </div>
+                <div id="pnlFileInfo" class="file-info">
+                    <div class="title-medium">File: <span id="fileName"></span></div>
+                    <div id="filePlaylists" class="file-details">Playlists details...</div>
+                    <div id="fileTracks" class="file-details">Tracks details...</div>
+                </div>
+            </div>
+            <div id="pnlUpload" class="upload-panel">
+                <div class="title-medium">Importing new playlists and tracks</div>
+                <div class="status-item">
+                    <span>Processed playlists: </span><span id="playlistStep"></span>/<span id="playlistTotal"></span>
+                </div>
+                <div class="status-item">
+                    <span>Processed tracks: </span><span id="trackStep"></span>/<span id="trackTotal"></span>
+                </div>
+                <div id="globalStep" class="global-step"></div>
+                <div class="progress custom-progress">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="container footer-container">
+                <a href="#">Wiki</a>
+                <a href="#">CopyRight</a>
+            </div>
+        </div>
+        <script type='text/javascript'>
+
+var authWindow = null;
+var token = null;
+var userId = '';
+var collections = {};
+var name = 'spotify';
+
+var isImporting = false;
+var isExporting = false;
+var globalStep = "";
+var playlistStep = 0;
+var trackStep = 0;
+var trackTotal = 0;
+
+var playlistQueue = [];
+var savedQueue = [];
+
+var makingChanges = false;
+
+function refreshTrackData(callback) {
+    if (!isExporting && !isImporting) {
+        isExporting = true;
+        resetCounter();
+        $('#pnlLoadingAccount').show();
+        var $loadingTitle = $('#loadingTitle');
+        var $spinner = $('#spinner');
+
+        $spinner.addClass('spinner-border');
+        $loadingTitle.find('.status-message').text('Please wait. Loading your playlists and tracks...');
+
+        refreshPlaylist(function () {
+            refreshMyMusicTracks(function () {
+                $spinner.removeClass('spinner-border').addClass('spinner-grow').css('animation', 'spinner-grow 1.5s infinite');
+                $loadingTitle.find('.status-message').text('Finished loading, you now might want to export or import.');
+                $('.loading-progress').addClass('stop-animation');
+
+                isExporting = false;
+                callback();
+            });
+        });
+    }
+}
+
+
+function resetCounter() {
+    globalStep = '';
+    playlistStep = 0;
+    playlistTotal = 0;
+    trackStep = 0;
+    trackTotal = 0;
+}
+
+function refreshProgress() {
+    $('#globalStep').html(globalStep);
+    $('#playlistStep').html(playlistStep);
+    $('#playlistTotal').html(playlistTotal);
+    $('#trackStep').html(trackStep);
+    $('#trackTotal').html(trackTotal);
+    var progress = 0;
+    if (trackTotal > 0) {
+        var progress = Math.floor(((trackStep / trackTotal) * 100));
+    }
+    $('#progressBar').css('width', progress+'%')
+    if (typeof collections !== 'undefined' && !makingChanges) {
+        var set = collectionProperties(collections);
+        $('#loadingPlaylists').html(""+set.playlistCount+" playlists");
+        $('#loadingTracks').html(""+set.trackCount+" tracks");
+    }
+    if (typeof importColl !== 'undefined') {
+        var set2 = collectionProperties(importColl);
+        $('#filePlaylists').html(""+set2.playlistCount+" playlists");
+        $('#fileTracks').html(""+set2.trackCount+" tracks");
+    }
+    setTimeout(refreshProgress, 1000);
+}
+
+function login() {
+    var width = 480, height = 640;
+    var left = (screen.width / 2) - (width / 2);
+    var top = (screen.height / 2) - (height / 2);
+
+    var set = {
+      client_id: 'ff9f2d6723914602a457d2f6e92ad29b',
+      redirect_uri: 'https://harmonify.xyz/login.html',
+      scope: 'playlist-read playlist-read-private playlist-modify-public playlist-modify-private user-library-read user-library-modify',
+      response_type: 'token',
+      show_dialog: 'true'
+    };
+    authWindow = window.open(
+        "https://accounts.spotify.com/authorize?" + urlEncodeSet(set),
+        "Spotify",
+        'menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=' + width + ', height=' + height + ', top=' + top + ', left=' + left
+    );
+}
+function relogin() {
+    login();
+    $('#pnlAction').hide();
+    var $loadingProgress = $('.loading-progress');
+    $loadingProgress.removeClass('stop-animation');
+}
+    
+function authCallback(event){
+    if (event.origin !== "https://harmonify.xyz") {
+        console.log("config.uri missconfigured:");
+        return;
+    }
+    if (authWindow) {
+        authWindow.close();
+    }
+    handleAuth(event.data);
+}
+
+function urlEncodeSet(set) {
+    var comps = [];
+    for (var i in set) {
+        if (set.hasOwnProperty(i)) {
+            comps.push(encodeURIComponent(i)+"="+encodeURIComponent(set[i]));
+        }
+    }
+    var string = comps.join("&");
+    return string;
+}
+
+function download(filename, text) {
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    pom.setAttribute('download', filename);
+
+    if (document.createEvent) {
+        var event = document.createEvent('MouseEvents');
+        event.initEvent('click', true, true);
+        pom.dispatchEvent(event);
+    }
+    else {
+        pom.click();
+    }
+}
+
+function readFile(evt) {
+    //Retrieve the first (and only!) File from the FileList object
+    var f = evt.target.files[0]; 
+
+    if (f) {
+        $('#fileName').html(f.name);
+
+        var r = new FileReader();
+        r.onload = function(e) { 
+            var json = e.target.result;
+
+            importColl = JSON.parse(json);
+
+            $('#pnlFile').hide();
+            $('#pnlFileInfo').show();
+            $('#pnlUpload').show();
+
+            compareEverything();
+        }
+        r.readAsText(f);
+    } else { 
+      alert("Failed to load file");
+    }
+}
+
+function collectionProperties(coll) {
+    return { playlistCount: collPlaylistCount(coll), trackCount: collTrackCount(coll) };
+}
+
+function collTrackCount(coll) {
+    var count = 0;
+    var keys = _.keys(coll.playlists);
+    $.each(keys, function (index, value) {
+        count += coll.playlists[value].tracks.length;
+    });
+    if (coll.starred) {
+        count += coll.starred.length;
+    }
+    if (coll.saved) {
+        count += coll.saved.length;
+    }
+    return count;
+}
+
+function collPlaylistCount(coll) {
+    var keys = _.keys(coll.playlists);
+    var count = keys.length + 1;
+    if (!("importedStarred" in keys)) {
+        count++;
+    }
+    return count;
+}
+
+function compareEverything() {
+    if (!isImporting && !isExporting) {
+        isImporting = true;
+        makingChanges = true;
+        resetCounter();
+
+        savedQueue = [];
+        playlistQueue = [];
+
+        globalStep = "Uploading";
+        if (typeof importColl !== 'undefined') {
+
+            playlistTotal = collPlaylistCount(importColl);            
+
+            // TONOTDO:compare starred -> can not really do that since there is no api to manipulate those
+            // instead we just create a replacement-standard-list
+            globalStep = "Comparing starred tracks";
+            
+            makeSureImportedStarredExists(function (proceed) {
+                if (importColl.starred && importColl.starred.length > 0) {
+                    compareUriTracks(importColl.starred, collections.starred, addToStarred);
+                }
+                // compare saved
+                globalStep = "Comparing saved tracks";
+                compareIdTracks(importColl.saved, collections.saved, addToSaved);
+                playlistStep += 1;
+
+                // compare other playlists
+                var playlistNames = _.keys(importColl.playlists);
+                globalStep = "Comparing custom playlists";
+                handlePlaylistCompare(playlistNames, function () {
+                    handleTrackUpload();
+                });
+            });
+        }
+    }
+}
+
+function handleTrackUpload() {
+
+    trackDiff = savedQueue.length + playlistQueue.length;
+    trackTotal = Math.max(collTrackCount(importColl), trackDiff);
+    trackStep = trackTotal - trackDiff;
+
+
+    if (trackTotal > 0) {
+        $('#progressBar').show();
+        globalStep = "Uploading tracks";
+        handleSavedRequests(savedQueue, function () {
+            handlePlaylistRequests(playlistQueue, function () {
+                globalStep = "Finished uploading";
+                trackTotal = trackStep;
+                isImporting = false;
+            });
+        });
+    } else {
+        globalStep = "No new tracks found in import";
+    }
+}
+
+function handlePlaylistCompare(names, callback) {
+    var name = names.pop();
+    if (!name) {
+        callback();
+        return;
+    }
+    makeSurePlaylistExists(name, function (proceed) {
+        if (proceed) {
+            var playlistId = collections.playlists[name].id;
+            compareUriTracks(importColl.playlists[name].tracks, collections.playlists[name].tracks, function (uri) {
+                addToPlaylist(playlistId, uri);
+            });
+        }
+        handlePlaylistCompare(names, callback);
+    });
+}
+
+function addToPlaylist(playlistId, trackUri) {
+    playlistQueue.push('https://api.spotify.com/v1/users/' + userId + '/playlists/' + playlistId + '/tracks?uris=' + encodeURIComponent(trackUri));
+}
+
+function makeSurePlaylistExists(name, callback) {
+    playlistStep += 1;
+    if (name in collections.playlists) {
+        callback(true);
+        return;
+    }
+    var set = { name: name, public: "true" };
+    $.ajax({
+        method: "POST",
+        url: 'https://api.spotify.com/v1/users/' + userId + '/playlists',
+        data: JSON.stringify(set),
+        contentType: 'application/json',
+        headers: {
+        'Authorization': 'Bearer ' + token
+        },
+        success: function(response) {         
+            // alert(JSON.stringify(response));
+            collections.playlists[response.name] = {
+                name: response.name,
+                href: response.tracks.href,
+                id: response.id,
+                tracks: []
+            };
+            callback(true);
+        },
+        fail: function () {
+            callback(false);
+        }
+    });
+}
+
+function makeSureImportedStarredExists(callback) {
+    var name = 'importedStarred';
+    makeSurePlaylistExists(name, callback);
+}
+
+function addToStarred(trackUri) {
+    var name = 'importedStarred';
+    var playlistId = collections.playlists[name].id;
+    uriInTracks(trackUri, collections.playlists[name].tracks, function (uri) {
+        addToPlaylist(playlistId, uri);
+    });
+}
+
+function handleSavedRequests(arr, callback) {
+    var url = arr.pop();
+    if (url) {
+        trackStep += 1;
+        $.ajax({
+            method: "PUT",
+            url: url,
+            headers: {
+            'Authorization': 'Bearer ' + token
+            },
+            success: function () {
+            },
+            fail: function (jqXHR, textStatus, errorThrown) {
+                console.log(errorThrown);
+            }
+        })
+        .always(function () {
+            handleSavedRequests(arr, callback);
+        });
+    } else {
+        callback();
+    }
+}
+
+function handlePlaylistRequests(arr, callback) {
+    var url = arr.pop();
+    if (url) {
+        trackStep += 1;   
+        $.ajax({
+            method: "POST",
+            url: url,
+            contentType: 'application/json',
+            headers: {
+            'Authorization': 'Bearer ' + token
+            },
+            success: function(response) {      
+                // collections.playlists[response.name] = {
+                //     id: response.id,
+                //     uri: response.uri
+                // };
+            },
+            fail: function (jqXHR, textStatus, errorThrown) {
+                console.log(errorThrown);
+            }
+        })
+        .always(function () {
+            handlePlaylistRequests(arr, callback);
+        })
+    } else {
+        callback();
+    }
+}
+
+function uriInTracks(uri, tracks, addCallback) {
+    var found = false;
+    $.each(tracks, function (index, value) {
+        if (value.uri == uri) {
+            found = true;
+        }
+    });
+    if (!found) {
+        addCallback(uri);
+    }
+}
+
+function addToSaved(id) {
+    savedQueue.push('https://api.spotify.com/v1/me/tracks?ids='+id);
+}
+
+function compareUriTracks(imported, stored, addCallback) {
+    $.each(imported, function (index, value) {
+        var found = false;
+        $.each(stored, function (index2, value2) {
+            if (value.uri == value2.uri) {
+                found = true;
+            }
+        });
+        if (!found) {
+            addCallback(value.uri);
+        }
+    });
+}
+
+function compareIdTracks(imported, stored, addCallback) {
+    $.each(imported, function (index, value) {
+        var found = false;
+        $.each(stored, function (index2, value2) {
+            if (value.id == value2.id) {
+                found = true;
+            }
+        });
+        if (!found) {
+            addCallback(value.id);
+        }
+    });
+}
+
+function bindControls() {
+    $('#btnImport').click(function () {
+        $('#ReLogin').hide();
+        $('#pnlAction').hide();
+        $('#pnlImport').show();
+    });
+    $('#btnExport').click(function () {
+        var json = JSON.stringify(collections);
+        var d = new Date();
+        var time = '@' + d.getFullYear() + '_' + (d.getMonth() + 1) + '_' + d.getDate();
+        download(name+time+'.json', json);
+    });
+    $('#fileImport').change(readFile);
+}
+
+function handleAuth(accessToken) {
+    token = accessToken;
+    // fetch my public playlists
+    $.ajax({
+        url: 'https://api.spotify.com/v1/me',
+        headers: {
+        'Authorization': 'Bearer ' + accessToken
+        },
+        success: function(response) {         
+            var user_id = response.id.toLowerCase();
+            userId = user_id;
+            name = user_id;
+
+            $('#userName').html(name);
+            $('#pnlLoggedOut').hide();
+
+            refreshTrackData(function () {                   
+                $('#pnlAction').show();
+                $('#ReLogin').show();
+            });
+        }
+    });
+}
+
+function refreshMyMusicTracks(callback) {
+    collections.saved = [];
+    playlistStep += 1;
+    loadTrackChunks('https://api.spotify.com/v1/me/tracks', collections.saved, callback);
+}
+
+// DEPRECATED
+// function refreshStarredTracks(callback) {
+//     collections.starred = [];
+//     playlistStep += 1;
+//     loadStarred('https://api.spotify.com/v1/users/' + userId + '/starred', collections.starred, callback)
+// }
+
+// DEPRECATED
+// function loadStarred(url, arr, callback) {
+//     $.ajax({
+//         url: url,
+//         headers: {
+//             'Authorization': 'Bearer ' + token
+//         },
+//         success: function(data) {         
+//             if (!data) return;
+//             if ('tracks' in data) {
+//                 loadTrackChunks(data.tracks.href, arr, callback);
+//             } else {
+//                 callback();
+//             }                
+//         }
+//     });
+// }
+
+function loadTrackChunks(url, arr, callback) {
+    $.ajax({
+        url: url,
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
+        success: function (data) {
+            if (!data) return;
+            if ('items' in data) {
+                $.each(data.items, function (index, value) {
+                    if(value.track !== null){
+                        arr.push({ id: value.track.id, uri: value.track.uri });    
+                    }else{
+                        console.log("track is null", value);
+                    }                    
+                });
+            } else {
+                arr.push({ id: data.track.id, uri: data.track.uri });
+            }
+            if (data.next) {
+                loadTrackChunks(data.next, arr, callback);
+            } else {
+                callback();
+            }
+        }
+    });
+}
+
+function refreshPlaylist(callback) {
+    collections.playlists = {};
+    var playlists = [];
+    loadPlaylistChunks('https://api.spotify.com/v1/users/' + userId + '/playlists', playlists, function () {
+        handlePlaylistTracks(playlists, collections.playlists, callback);
+    });
+}
+
+function loadPlaylistChunks(url, arr, callback) {
+    $.ajax({
+        url: url,
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
+        success: function (data) {
+            if (!data) return;
+            if ('items' in data) {
+                $.each(data.items, function (index, value) {
+                    if (value.tracks && value.tracks.href) {
+                        arr.push({
+                            name: value.name,
+                            href: value.tracks.href,
+                            id: value.id,
+                            tracks: []
+                        });
+                    }
+                });
+            } else {
+                if (data.tracks && data.tracks.href) {
+                    arr.push({
+                        name: data.name,
+                        href: data.tracks.href,
+                        id: value.id,
+                        tracks: []
+                    });
+                }
+            }
+            if (data.next) {
+                loadPlaylistChunks(data.next, arr, callback);
+            } else {
+                callback();
+            }
+        }
+    });
+}
+
+function handlePlaylistTracks(arr, result, callback) {
+    var item = arr.pop();
+    if (!item) {
+        return callback();
+    }
+    playlistStep += 1;
+    item.tracks = [];
+    loadTrackChunks(item.href, item.tracks, function () {
+        delete item.href;
+        result[item.name] = item;
+        if (arr.length == 0) {
+            callback();
+        } else {
+            handlePlaylistTracks(arr, result, callback);
+        }
+    });
+}
+
+window.onload = function() {
+    if (navigator.userAgent.indexOf('MSIE') !== -1 || navigator.appVersion.indexOf('Trident/') > 0) {
+        // MSIE
+        $('#pnlLoggedOut').html('Please use Firefox or Chrome, due to a bug in Internet Explorer');
+    } else {
+        document.getElementById("btnRelogin").addEventListener("click", relogin);
+        $('#login').click(login);
+        window.addEventListener("message", authCallback, false);
+        bindControls();
+        refreshProgress();
+    }
+}
+
+        </script>
+    </body>
+</html>
