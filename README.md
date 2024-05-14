@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/Aliasgharhi/Harmonify" target="_blank" rel="noopener noreferrer">
+  <a href="https://github.com/harmonytify/harmonytify.github.io" target="_blank" rel="noopener noreferrer">
     <picture>
       <img src="https://github.com/Aliasgharhi/Harmonify/blob/master/logo.png">
     </picture>
