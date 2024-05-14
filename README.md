@@ -1,7 +1,7 @@
 <p align="center">
   <a href="https://github.com/harmonytify/harmonytify.github.io" target="_blank" rel="noopener noreferrer">
     <picture>
-      <img src="https://github.com/Aliasgharhi/Harmonify/blob/master/logo.png">
+      <img src="https://github.com/harmonytify/harmonytify.github.io/blob/main/logo.png">
     </picture>
   </a>
 </p>
